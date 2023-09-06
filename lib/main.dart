@@ -5,16 +5,18 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:okflutter/FirbaseTestPage.dart';
+import 'package:okflutter/HomePage.dart';
 
 import 'FirstPage.dart';
 import 'AutoPage.dart';
+import 'LoanApp.dart';
 
 void main() {
   // runZonedGuarded(() => {runApp(const MyApp())}, (error, stack) {
   //   print('runZonedGuarded: Caught error in my root zone.');
   //   FirebaseCrashlytics.instance.recordError(error, stack);
   // });
-  runApp(const MyApp());
+  runApp(MyApp());
   initFireBase();
 }
 
@@ -31,9 +33,11 @@ initFireBase() async {
 
   await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(true);
   FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
-  // FlutterError.onError = (errorDetails) {
-  //   FirebaseCrashlytics.instance.recordFlutterFatalError(errorDetails);
-  // };
+  FlutterError.onError = (errorDetails) {
+    FirebaseCrashlytics.instance.recordFlutterFatalError(errorDetails);
+  };
+
+
 }
 
 class DefaultFirebaseOptions {}
@@ -58,7 +62,7 @@ class MyApp extends StatelessWidget {
         // is not restarted.
         primarySwatch: Colors.blue,
       ),
-      home: FirbaseTestPage(),
+      home: HomePage(),
     );
   }
 }

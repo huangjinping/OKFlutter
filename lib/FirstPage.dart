@@ -1,10 +1,13 @@
 import 'dart:io';
 
+import 'package:camera/camera.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:my_plugin/my_plugin.dart';
+import 'package:okflutter/CameraApp.dart';
 
 class FirstPage extends StatefulWidget {
   const FirstPage({Key? key}) : super(key: key);
@@ -20,6 +23,7 @@ class _FirstPageState extends State<FirstPage> {
   late File userFile;
 
   final _picker = ImagePicker();
+  CameraController? controller;
 
   void onClick() {
     try {
@@ -43,6 +47,49 @@ class _FirstPageState extends State<FirstPage> {
       return Image.file(imgw, width: 150, height: 105);
     }
     return Column();
+  }
+
+  void onCameraLib() async {
+    print("onCameraLib");
+    Navigator.push(context, MaterialPageRoute(builder: (context) {
+      return CameraApp();
+    }));
+  }
+
+  Future<XFile?> takePicture() async {
+    final CameraController? cameraController = controller;
+    if (cameraController == null || !cameraController.value.isInitialized) {
+      showInSnackBar('Error: select a camera first.');
+      return null;
+    }
+
+    if (cameraController.value.isTakingPicture) {
+      // A capture is already pending, do nothing.
+      return null;
+    }
+
+    try {
+      final XFile file = await cameraController.takePicture();
+      return file;
+    } on CameraException catch (e) {
+      _showCameraException(e);
+      return null;
+    }
+  }
+
+  void _showCameraException(CameraException e) {
+    _logError(e.code, e.description);
+    showInSnackBar('Error: ${e.code}\n${e.description}');
+  }
+
+  void _logError(String code, String? message) {
+    // ignore: avoid_print
+    print('Error: $code${message == null ? '' : '\nError Message: $message'}');
+  }
+
+  void showInSnackBar(String message) {
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text(message)));
   }
 
   void onCamara() async {
@@ -93,8 +140,11 @@ class _FirstPageState extends State<FirstPage> {
               child: GestureDetector(onTap: onClick1, child: Text("操作外部插件")),
             ),
             Container(
-              margin: EdgeInsets.all(50),
               child: GestureDetector(onTap: onCamara, child: Text("打开1照相机")),
+            ),
+            Container(
+              child:
+                  GestureDetector(onTap: onCameraLib, child: Text("imageLib")),
             ),
             getImageView(_image1)
           ],
