@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:okflutter/FirbaseTestPage.dart';
 import 'package:okflutter/FirstPage.dart';
 
+import 'AnimationPage.dart';
+import 'AutoCompleteDemo.dart';
+
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
@@ -33,6 +36,22 @@ class _HomePageState extends State<HomePage> {
               }));
             },
             child: Text("Image01"),
+          ),
+          MaterialButton(
+            onPressed: () {
+              Navigator.push(context, MaterialPageRoute(builder: (context) {
+                return AnimationPage();
+              }));
+            },
+            child: Text("Animation"),
+          ),
+          MaterialButton(
+            onPressed: () {
+              Navigator.push(context, MaterialPageRoute(builder: (context) {
+                return AutoCompleteDemo();
+              }));
+            },
+            child: Text("AutoComplete"),
           ),
         ],
       ),

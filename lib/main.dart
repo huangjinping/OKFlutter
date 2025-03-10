@@ -1,15 +1,7 @@
-import 'dart:async';
-import 'dart:ui';
-
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
-import 'package:okflutter/FirbaseTestPage.dart';
 import 'package:okflutter/HomePage.dart';
-
-import 'FirstPage.dart';
-import 'AutoPage.dart';
-import 'LoanApp.dart';
 
 void main() {
   // runZonedGuarded(() => {runApp(const MyApp())}, (error, stack) {
@@ -22,13 +14,13 @@ void main() {
 
 initFireBase() async {
   await Firebase.initializeApp(
-      // options: FirebaseOptions(
-      //   apiKey: "AIzaSyAnuVSMjDddZIB-QZk1YTuzB0cOXAfaPms",
-      //   appId: "1:1099439985689:android:3065f0d1e31d4cd4300688",
-      //   messagingSenderId: "1099439985689",
-      //   projectId: "okflutter-69bd9",
-      // ),
-      );
+    options: FirebaseOptions(
+      apiKey: "AIzaSyAnuVSMjDddZIB-QZk1YTuzB0cOXAfaPms",
+      appId: "1:1099439985689:android:3065f0d1e31d4cd4300688",
+      messagingSenderId: "1099439985689",
+      projectId: "okflutter-69bd9",
+    ),
+  );
   WidgetsFlutterBinding.ensureInitialized();
 
   await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(true);
@@ -36,8 +28,6 @@ initFireBase() async {
   FlutterError.onError = (errorDetails) {
     FirebaseCrashlytics.instance.recordFlutterFatalError(errorDetails);
   };
-
-
 }
 
 class DefaultFirebaseOptions {}

@@ -47,6 +47,8 @@ dependencies:
   fluttertoast: ^8.2.2
   get: ^4.6.5
   camera: ^0.10.5+3
+  textfield_search: ^0.10.0
+  firebase_app_installations: ^0.2.3+6
 #  flutter_downloader: ^1.10.2
 
 dev_dependencies:

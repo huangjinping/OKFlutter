@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:firebase_app_installations/firebase_app_installations.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 
@@ -18,6 +19,9 @@ class _FirbaseTestPageState extends State<FirbaseTestPage> {
   static FirebaseAnalytics analytics = FirebaseAnalytics.instance;
   static FirebaseAnalyticsObserver observer =
       FirebaseAnalyticsObserver(analytics: analytics);
+
+  String msg = "no  message";
+  String msg1 = "no  message";
 
   @override
   void initState() {
@@ -44,6 +48,28 @@ class _FirbaseTestPageState extends State<FirbaseTestPage> {
         'bool': true.toString(),
       },
     );
+  }
+
+  setMessage(e) {
+    setState(() {
+      msg = e;
+    });
+  }
+
+  Future<void> _testAppInstanceId() async {
+    String? id = await analytics.appInstanceId;
+    if (id != null) {
+      setMessage('appInstanceId succeeded: $id');
+    } else {
+      setMessage('appInstanceId failed, consent declined');
+    }
+  }
+
+  Future<void> _testAppInstanceId1() async {
+    String appInstanceId1 = await FirebaseInstallations.instance.getId();
+    setState(() {
+      msg1 = 'appInstanceId succeeded:$appInstanceId1';
+    });
   }
 
   onBug() {
@@ -114,6 +140,42 @@ class _FirbaseTestPageState extends State<FirbaseTestPage> {
               },
               child: const Text('Record Fatal Error'),
             ),
+            ElevatedButton(
+              onPressed: () {
+                // ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                //   content: Text(
+                //       'Thrown error has been caught and sent to Crashlytics.'),
+                //   duration: Duration(seconds: 5),
+                // ));
+
+                _testAppInstanceId();
+                // Example of thrown error, it will be caught and sent to
+                // Crashlytics.
+              },
+              child: const Text('点击获取AppInstanceId'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                // ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                //   content: Text(
+                //       'Thrown error has been caught and sent to Crashlytics.'),
+                //   duration: Duration(seconds: 5),
+                // ));
+
+                _testAppInstanceId1();
+                // Example of thrown error, it will be caught and sent to
+                // Crashlytics.
+              },
+              child: const Text('点击获取AppInstanceId1'),
+            ),
+            Text(
+              msg,
+              style: TextStyle(color: Colors.red),
+            ),
+            Text(
+              msg1,
+              style: TextStyle(color: Colors.red),
+            )
           ],
         ));
   }
