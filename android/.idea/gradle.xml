@@ -3,21 +3,29 @@
   <component name="GradleSettings">
     <option name="linkedExternalProjectsSettings">
       <GradleProjectSettings>
-        <option name="testRunner" value="GRADLE" />
-        <option name="distributionType" value="DEFAULT_WRAPPED" />
+        <compositeConfiguration>
+          <compositeBuild compositeDefinitionSource="SCRIPT">
+            <builds>
+              <build path="$PROJECT_DIR$/../../../fluttersdk/packages/flutter_tools/gradle" name="gradle">
+                <projects>
+                  <project path="$PROJECT_DIR$/../../../fluttersdk/packages/flutter_tools/gradle" />
+                </projects>
+              </build>
+            </builds>
+          </compositeBuild>
+        </compositeConfiguration>
+        <option name="testRunner" value="CHOOSE_PER_TEST" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="gradleJvm" value="#GRADLE_LOCAL_JAVA_HOME" />
         <option name="modules">
           <set>
-            <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/camera_android-0.10.8+7/android" />
-            <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/firebase_analytics-10.1.6/android" />
-            <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/firebase_core-2.8.0/android" />
-            <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/firebase_crashlytics-3.0.17/android" />
-            <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/flutter_plugin_android_lifecycle-2.0.9/android" />
-            <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/fluttertoast-8.2.2/android" />
-            <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/image_picker_android-0.8.6+6/android" />
+            <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/flutter_plugin_android_lifecycle-2.0.30/android" />
+            <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/image_picker_android-0.8.13+1/android" />
+            <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/video_compress-3.1.4/android" />
+            <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/video_player_android-2.8.13/android" />
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
-            <option value="$PROJECT_DIR$/../../../work/android/my_plugin/android" />
+            <option value="$PROJECT_DIR$/../../../fluttersdk/packages/flutter_tools/gradle" />
           </set>
         </option>
       </GradleProjectSettings>

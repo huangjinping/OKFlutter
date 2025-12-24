@@ -1,39 +1,17 @@
-import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'dart:io';
+
+import 'package:file_selector/file_selector.dart';
 import 'package:flutter/material.dart';
-import 'package:okflutter/HomePage.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:okflutter/VideoPlayerScreen.dart';
+import 'package:video_compress/video_compress.dart';
 
 void main() {
-  // runZonedGuarded(() => {runApp(const MyApp())}, (error, stack) {
-  //   print('runZonedGuarded: Caught error in my root zone.');
-  //   FirebaseCrashlytics.instance.recordError(error, stack);
-  // });
-  runApp(MyApp());
-  initFireBase();
+  runApp(const MyApp());
 }
-
-initFireBase() async {
-  await Firebase.initializeApp(
-    options: FirebaseOptions(
-      apiKey: "AIzaSyAnuVSMjDddZIB-QZk1YTuzB0cOXAfaPms",
-      appId: "1:1099439985689:android:3065f0d1e31d4cd4300688",
-      messagingSenderId: "1099439985689",
-      projectId: "okflutter-69bd9",
-    ),
-  );
-  WidgetsFlutterBinding.ensureInitialized();
-
-  await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(true);
-  FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
-  FlutterError.onError = (errorDetails) {
-    FirebaseCrashlytics.instance.recordFlutterFatalError(errorDetails);
-  };
-}
-
-class DefaultFirebaseOptions {}
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  const MyApp({super.key});
 
   // This widget is the root of your application.
   @override
@@ -43,22 +21,28 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         // This is the theme of your application.
         //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
+        // TRY THIS: Try running your application with "flutter run". You'll see
+        // the application has a purple toolbar. Then, without quitting the app,
+        // try changing the seedColor in the colorScheme below to Colors.green
+        // and then invoke "hot reload" (save your changes or press the "hot
+        // reload" button in a Flutter-supported IDE, or press "r" if you used
+        // the command line to start the app).
+        //
         // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
-        primarySwatch: Colors.blue,
+        // state is not lost during the reload. To reset the state, use hot
+        // restart instead.
+        //
+        // This works for code too, not just values: Most code changes can be
+        // tested with just a hot reload.
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: HomePage(),
+      home: const MyHomePage(title: 'Flutter Demo Home Page'),
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key, required this.title}) : super(key: key);
+  const MyHomePage({super.key, required this.title});
 
   // This widget is the home page of your application. It is stateful, meaning
   // that it has a State object (defined below) that contains fields that affect
@@ -76,69 +60,83 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+  String _counter = 'video';
 
-  void _incrementCounter() {
+  Future<void> _compressVideo() async {
+    var file;
+    if (Platform.isMacOS) {
+      final typeGroup = XTypeGroup(label: 'videos', extensions: ['mov', 'mp4']);
+      file = await openFile(acceptedTypeGroups: [typeGroup]);
+    } else {
+      final picker = ImagePicker();
+      var pickedFile = await picker.pickVideo(source: ImageSource.gallery);
+      file = File(pickedFile!.path);
+    }
+    if (file == null) {
+      return;
+    }
+
+    print("===============001==============");
+
+    await VideoCompress.setLogLevel(0);
+    final info = await VideoCompress.compressVideo(
+      file.path,
+      quality: VideoQuality.MediumQuality,
+      deleteOrigin: false,
+      includeAudio: true,
+    );
+    print("===============002===1===========");
+
+    print(info!.path);
+    print("===============002==============");
     setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
+      _counter = info.path!;
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
     return Scaffold(
-      appBar: AppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
-      ),
+      appBar: AppBar(title: Text(widget.title!)),
       body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
         child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Invoke "debug painting" (press "p" in the console, choose the
-          // "Toggle Debug Paint" action from the Flutter Inspector in Android
-          // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-          // to see the wireframe for each widget.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
+            Stack(
+              children: [
+                IgnorePointer(
+                  ignoring: true,
+                  child: Text('You have pushed the button this many times:'),
+                ),
+              ],
             ),
             Text(
               '$_counter',
-              style: Theme.of(context).textTheme.headline4,
+              style: Theme.of(context).textTheme.headlineMedium,
+            ),
+            InkWell(
+              child: Icon(Icons.cancel, size: 55),
+              onTap: () {
+                VideoCompress.cancelCompression();
+              },
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => VideoPlayerScreen()),
+                );
+              },
+              child: Text('Test thumbnail'),
             ),
           ],
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
+        onPressed: () async => _compressVideo(),
         tooltip: 'Increment',
-        child: const Icon(Icons.add),
+        child: Icon(Icons.add),
       ),
-      // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }
